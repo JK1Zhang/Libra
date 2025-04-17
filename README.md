@@ -67,6 +67,7 @@ See details in [Libra_PD ](./src/Libra_PD/README.md)and [Libra_KV](./src/Libra_K
 - Mixgraph benchmark
 
   `$ cd benchmark/Mixgraph`
+
   `$ make`
 
 - YCSB benchmark
@@ -74,6 +75,7 @@ See details in [Libra_PD ](./src/Libra_PD/README.md)and [Libra_KV](./src/Libra_K
   `$ git clone https://github.com/pingcap/go-ycsb.git`
 
   `$ cd go-ycsb`
+
   `$ make`
 
   
@@ -104,7 +106,7 @@ Libra turns on the **Cooperative Scheduling** policy in the following way：
 
 Libra  is also compatible with some other scheduling policies and can adjust the scheduling policy dynamically by modify multi-hot-scheduler-mode. 
 
-> multi-hot-scheduler-mode
+> multi-hot-scheduler-mode setting
 >
 > 0 : Closed
 >
