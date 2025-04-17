@@ -82,15 +82,39 @@ See details in [Libra_PD ](./src/Libra_PD/README.md)and [Libra_KV](./src/Libra_K
 
 Using go-YCSB on the client node to issue requests to the Libra cluster
 
-**Load the database**
+#### **Load the database**
 
 `$ ./go-ycsb load tikv -P workloads/workloada -p tikv.pd=$node IP: port$ -p threadcount=$N1$ -p operationcount=$N2$ ...`
 
-**Run benchmarks based on the database**
+#### **Run benchmarks based on the database**
 
-``$ ./go-ycsb run tikv -P workloads/workloada -p tikv.pd=$node IP: port$ -p threadcount=$N1$ -p operationcount=$N2$ ...``
+``$ ./go-ycsb run tikv -P workloads/workloada -p tikv.pd=$node IP: client  port$ -p threadcount=$N1$ -p operationcount=$N2$ ...``
 
 If you're planning to test the **Mixgraph** workload, use the Mixgraph benchmark from this repository. It is modified from go-YCSB and used in the same way. You need to add the following parameters to set it:
 
 ``-p mixgraph=true -p fieldlengthdistribution=pareto -p fieldlength=$N1$ -p fieldcount=1 -p keyrangenum=$N2$ -p insertorder=order -p zeropadding=$N3$ -p valuesigma=226.409 -p valuek=0.923 -p keydista=0.002312 -p keydistb=0.3467 -p usedefaultrequest=false -p requestdistribution=zipfian -p keyrangedista=141.8  ...``
+
+#### **Scheduling policy configuration**
+
+Libra turns on the **Cooperative Scheduling** policy in the following way：
+
+``$ ./Libra_PD/bin/pd-ctl -u [PD IP: client port$] sch add balance-multiple-dimension-scheduler``
+
+``$ ./Libra_PD/bin/pd-ctl -u [PD IP: client port$] config set multi-hot-scheduler-mode 1``
+
+Libra  is also compatible with some other scheduling policies and can adjust the scheduling policy dynamically by modify multi-hot-scheduler-mode. 
+
+> multi-hot-scheduler-mode
+>
+> 0 : Closed
+>
+> 1: Two-dimensional co-scheduling
+>
+> 2 : I/O dimension
+>
+> 3 : CPU dimension
+>
+> 4 : Weighted scheduling
+
+
 
