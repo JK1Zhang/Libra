@@ -1,149 +1,90 @@
-# Libra
+# Libra: Cooperative Scheduling Between CPU and Disk I/O for Load Balancing in Distributed Key-Value Stores
 
+## 1. Introduction
 
+Distributed key-value (KV) stores are fundamental components of modern computing infrastructure for efficiently storing and managing large-scale datasets.  Existing distributed KV stores often shard data by key ranges into multiple regions and distribute the regions across multiple nodes. However,  range-based sharding leads to load imbalance in two critical dimensions: CPU utilization and disk I/O. Also, the dynamic and often misaligned characteristics of the two dimensions make it challenging to simultaneously achieve balance in both.  We propose Libra, a cooperative scheduling framework that monitors the interactions of CPU and disk I/O loads and carefully migrates regions across nodes for load balancing. We implement Libra atop TiKV, a production distributed KV store, and show that Libra increases throughput by up to 72.1\% and reduces tail latency by up to 56.7\% compared to state-of-the-art approaches.
 
-## Dependence
 
-golang?
 
-cargo?
 
-make?
+## 2. Overview
+* The prototype is written in Golang based on [TiKV project]([TiKV Project](https://github.com/tikv))
 
+* [The introduction on TiKV](./src/Libra_KV/README.md)
 
+* [The introduction on PD](./src/Libra_PD/README.md)
 
+  
 
+## 3. Dependency 
 
-## Compile
+See details in [Libra_PD ](./src/Libra_PD/README.md)and [Libra_KV](./src/Libra_KV/README.md).
 
 
 
-```shell
-cd src/Libra_PD；
-make
+## 3. Build and install Libra project
 
-cd src/Libra_KV
-make
-```
+* Getting the source code of Libra  
+`$ git clone git@github.com:JK1Zhang/Libra.git`
 
+* Compile Libra 
+  `$ cd src/Libra_KV`
+  `$ make`
+  `$ cd src/Libra_PD`
+  `$ make`
 
+  
 
-## Deploy
+## 4. Deploy the Libra Prototype
 
+- Install tiup tools
 
+  `$ curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh`
 
+  `$ source .bash_profile`
 
+  `$ tiup cluster`
 
-## Run
+- Topology setup and deploy
 
+  Libra needs to setup clusters through a [topology file](https://tikv.org/docs/7.1/deploy/install/production/#step-2-initialize-cluster-topology-file)，there is an [example](./topology.yaml) in the repository as a reference.
 
+  `$ tiup cluster deploy Libra v5.4.0 ./topology.yaml --user root [-p] [-i /home/root/.ssh/gcp_rsa]`
 
-### 1.软硬件配置需求
+  `$ tiup cluster start Libra`
 
-[TiDB 软件和硬件环境建议配置 | PingCAP Docs](https://docs.pingcap.com/zh/tidb/stable/hardware-and-software-requirements)
+  `$./deploy.sh Libra`
 
-[TiDB 环境与系统配置检查 | PingCAP Docs](https://docs.pingcap.com/zh/tidb/stable/check-before-deployment)
+  
 
+## 5. Build and install benchmark
 
+- Mixgraph benchmark
 
-### 2.在中控机上部署 TiUP 组件
+  `$ cd benchmark/Mixgraph`
+  `$ make`
 
->  TiUP 组件是集群部署与管理工具，tiup只需要安装一次。
+- YCSB benchmark
 
-#### 2.1 执行如下命令安装 TiUP 工具：
+  `$ git clone https://github.com/pingcap/go-ycsb.git`
 
-```sh
-curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
-```
+  `$ cd go-ycsb`
+  `$ make`
 
-#### 2.2 声明全局环境变量
+  
 
-```shell
-source .bash_profile
-```
+## 6. Testing the Libra Prototype
 
-检查
+Using YCSB on the client node to issue requests to the Libra cluster
 
-```shell
-which tiup
-```
+**Load the database**
 
-#### 2.3 安装 TiUP cluster 组件
+`$ ./go-ycsb load tikv -P workloads/workloada -p tikv.pd=$node IP: port$ -p threadcount=$N1$ -p operationcount=$N2$ ...`
 
-```sh
-tiup cluster
-```
+**Run benchmarks based on the database**
+``$ ./go-ycsb run tikv -P workloads/workloada -p tikv.pd=$node IP: port$ -p threadcount=$N1$ -p operationcount=$N2$ ...``
 
-如果已经安装，则更新 TiUP cluster 组件至最新版本：
+If you're planning to test the **Mixgraph** workload, go ahead and use the Mixgraph benchmark from this repository and add the following parameters to set it：
 
-```sh
-tiup update --self && tiup update cluster
-```
+``$ -p mixgraph=true -p fieldlengthdistribution=pareto -p fieldlength=$N1$ -p fieldcount=1 -p keyrangenum=$N2$   -p insertorder=order -p zeropadding=20 -p valuesigma=226.409 -p valuek=0.923 -p keydista=0.002312 -p keydistb=0.3467 -p usedefaultrequest=false -p requestdistribution=zipfian -p keyrangedista=141.8  ...``
 
-检查
-
-```sh
-tiup --binary cluster
-```
-
-
-
-### 3. 设置集群拓扑并部署
-
-#### 3.1 集群拓扑设置
-
->  需要结合具体系统环境与业务需求进行配置, 为了方便功能测试开发，这里提供一个经过测试的单机三节点配置文件，修改对应用户后可以直接部署。
-
-[TIKV_Deploy_Assets/topology.yaml](./TIKV_Deploy_Assets/topology.yaml)
-
-
-
-#### 3.2 检查集群存在的潜在风险
-
-> -- user参数需要与拓扑配置文件中保持一致，并保证不同节点间的ssh连接。
-
-```sh
-tiup cluster check ./topology.yaml --user root [-p] [-i /home/root/.ssh/gcp_rsa]
-```
-
-自动修复集群存在的潜在风险
-
-```shell
-tiup cluster check ./topology.yaml --apply --user root [-p] [-i /home/root/.ssh/gcp_rsa]
-```
-
-
-
-#### 3.3 部署 TiDB 集群
-
-```shell
-tiup cluster deploy tidb-test v5.4.0 ./topology.yaml --user root [-p] [-i /home/root/.ssh/gcp_rsa]
-```
-
-> - `tidb-test` 为部署的集群名称。
-> - `v5.4.0` 为部署的集群版本，可以通过执行 `tiup list tidb` 来查看 TiUP 支持的最新可用版本，推荐使用v5.4.0。
-
-执行如下命令检查 `tidb-test` 集群情况：
-
-```shell
-tiup cluster display tidb-test
-```
-
-启动集群
-
-```shell
-tiup cluster start tidb-test
-```
-
-#### 3.4 记录初始密码
-
-安装完成提示初始密码，注意保管，后面调用SQL接口会用到。提示信息类似下方所示
-
-```shell
-+ [ Serial ] - UpdateTopology: cluster=rawkv_cluster
-Started cluster `rawkv_cluster` successfully
-The root password of TiDB database has been changed.
-The new password is: 'xxxxxxxxxxx'.
-Copy and record it to somewhere safe, it is only displayed once, and will not be stored.
-The generated password can NOT be get and shown again.
-```

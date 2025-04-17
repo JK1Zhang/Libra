@@ -1,0 +1,133 @@
+# # Global variables are applied to all deployments and used as the default value of
+# # the deployments if a specific deployment value is missing.
+global:
+  user: "libra"
+  ssh_port: 22
+  deploy_dir: "~/Libra-deploy"
+  data_dir: "~/Libra-data"
+
+# # Monitored variables are applied to all the machines.
+monitored:
+  node_exporter_port: 9120
+  blackbox_exporter_port: 9135
+
+# # More configuration items can be found in TiKV docs:
+# # - TiKV: https://pingcap.com/docs/stable/reference/configuration/tikv-server/configuration-file/
+# # - PD: https://pingcap.com/docs/stable/reference/configuration/pd-server/configuration-file/
+# # All configuration items use points to represent the hierarchy, e.g:
+# #   readpool.storage.use-unified-pool
+# #      
+# # You can overwrite this configuration via the instance-level `config` field.
+
+server_configs:
+  tikv:
+    storage.block-cache.capacity: "1GB"
+    raftstore.sync-log: false
+    readpool.storage.use-unified-pool: false
+    readpool.coprocessor.use-unified-pool: true
+    raftstore.capacity: "800GB"
+    raftstore.pd-heartbeat-tick-interval: "10s"
+    storage.scheduler-worker-pool-size: 5
+    raftstore.store-pool-size: 4
+    raftstore.apply-pool-size: 4
+    rocksdb.max-background-jobs: 8
+    raftdb.max-background-jobs: 4
+    raftdb.allow-concurrent-memtable-write: true
+    server.request-batch-enable-cross-command: false
+    server.grpc-concurrency: 8
+    readpool.unifiy-read-pool: true
+    readpool.unified.min-thread-count: 5
+    readpool.unified.max-thread-count: 20
+    readpool.storage.normal-concurrency: 10
+    pessimistic-txn.pipelined: true
+  pd:
+    schedule.leader-schedule-limit: 4
+    schedule.region-schedule-limit: 2048
+    schedule.replica-schedule-limit: 64
+    replication.location-labels: ["zone", "dc", "host"]
+    replication.max-replicas: 3
+
+pd_servers:
+  - host: 10.0.0.11
+    client_port: 2479
+    peer_port: 2480
+    deploy_dir: "~/Libra-deploy/pd"
+    data_dir: "~/Libra-deploy/data.pd"
+
+tikv_servers:
+  - host: 10.0.0.1
+    port: 20372
+    status_port: 20382
+    deploy_dir: "~/Libra-deploy/tikv"
+    data_dir: "~/Libra-deploy/data.tikv"
+    config:
+        server.labels: { zone: "zone1", dc: "dc1", host: "tikv1" }
+  - host: 10.0.0.2
+    port: 20372
+    status_port: 20382
+    deploy_dir: "~/Libra-deploy/tikv"
+    data_dir: "~/Libra-deploy/data.tikv"
+    config:
+        server.labels: { zone: "zone1", dc: "dc1", host: "tikv2" }
+  - host: 10.0.0.3
+    port: 20372
+    status_port: 20382
+    deploy_dir: "~/Libra-deploy/tikv"
+    data_dir: "~/Libra-deploy/data.tikv"
+    config:
+        server.labels: { zone: "zone1", dc: "dc1", host: "tikv3" }
+  - host: 10.0.0.4
+    port: 20372
+    status_port: 20382
+    deploy_dir: "~/Libra-deploy/tikv"
+    data_dir: "~/Libra-deploy/data.tikv"
+    config:
+        server.labels: { zone: "zone1", dc: "dc1", host: "tikv4" }
+  - host: 10.0.0.5
+    port: 20372
+    status_port: 20382
+    deploy_dir: "~/Libra-deploy/tikv"
+    data_dir: "~/Libra-deploy/data.tikv"
+    config:
+        server.labels: { zone: "zone1", dc: "dc1", host: "tikv5" }
+  - host: 10.0.0.6
+    port: 20372
+    status_port: 20382
+    deploy_dir: "~/Libra-deploy/tikv"
+    data_dir: "~/Libra-deploy/data.tikv"
+    config:
+        server.labels: { zone: "zone1", dc: "dc1", host: "tikv6" }
+  - host: 10.0.0.7
+    port: 20372
+    status_port: 20382
+    deploy_dir: "~/Libra-deploy/tikv"
+    data_dir: "~/Libra-deploy/data.tikv"
+    config:
+        server.labels: { zone: "zone1", dc: "dc1", host: "tikv7" }
+  - host: 10.0.0.8
+    port: 20372
+    status_port: 20382
+    deploy_dir: "~/Libra-deploy/tikv"
+    data_dir: "~/Libra-deploy/data.tikv"
+    config:
+        server.labels: { zone: "zone1", dc: "dc1", host: "tikv8" }
+        
+monitoring_servers:
+  - host: 10.0.0.52
+    port: 9170
+    deploy_dir: "~/Libra-deploy/prometheus"
+    data_dir: "~/Libra-deploy/data.prometheus"
+    storage_retention: "365d"
+
+grafana_servers:
+  - host: 10.0.0.52
+    port: 3100
+    deploy_dir: "~/Libra-deploy/grafana"
+
+alertmanager_servers:
+  - host: 10.0.0.52
+    ssh_port: 22
+    web_port: 9193
+    cluster_port: 9194
+    deploy_dir: "~/Libra-deploy/alertmanager"
+    data_dir: "~/Libra-deploy/data.alertmanager"

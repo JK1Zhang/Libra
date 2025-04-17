@@ -1,0 +1,27 @@
+commit 3b4964eee5d90c9bbfe501c9212ea3347d7857fc (HEAD -> multi-hot-scheduler)
+Author: jiyingtk <jiyingtk@mail.ustc.edu.cn>
+Date:   Mon Jul 6 10:47:56 2020 +0800
+
+    added changes:
+       * promote operations when failed in checkAddOperator
+
+commit 0bf1ba90e41297a11b2399bbfe6725745960ab42
+Author: jiyingtk <jiyingtk@mail.ustc.edu.cn>
+Date:   Wed May 27 11:39:34 2020 +0800
+
+    added changes:
+     * multiple dimension schedule
+     * prelong operation expired time
+     * directly transfer leader when move peer
+     * comment out operator generation of hot region scheduler
+     * some debug outputs
+
+
+ommit 1ad59bcbf36d87082c79a1fffa3b0895234ac862 (HEAD -> master, remote/master)
+Author: disksing <i@disksing.com>
+Date:   Fri Jul 3 13:27:30 2020 +0800
+
+    *: rename store block to pauseLeaderTransfer (#2598)
+    
+    Signed-off-by: disksing <i@disksing.com>
+
