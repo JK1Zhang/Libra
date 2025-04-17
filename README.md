@@ -24,19 +24,21 @@ See details in [Libra_PD ](./src/Libra_PD/README.md)and [Libra_KV](./src/Libra_K
 
 ## 3. Build and install Libra project
 
-* Getting the source code of Libra  
-`$ git clone git@github.com:JK1Zhang/Libra.git`
+* Getting the source code of Libra 
+
+  `$ git clone git@github.com:JK1Zhang/Libra.git`
 
 * Compile Libra 
-`$ cd src/Libra_KV`
 
-`$ make`
+  `$ cd src/Libra_KV`
 
-`$ cd src/Libra_PD`
+  `$ make`
+
+  `$ cd src/Libra_PD`
   
   `$ make`
-  
 
+  
 
 ## 4. Deploy the Libra Prototype
 
