@@ -75,7 +75,7 @@ See details in [Libra_PD ](./src/Libra_PD/README.md)and [Libra_KV](./src/Libra_K
 
 ## 6. Testing the Libra Prototype
 
-Using YCSB on the client node to issue requests to the Libra cluster
+Using go-YCSB on the client node to issue requests to the Libra cluster
 
 **Load the database**
 
@@ -84,7 +84,7 @@ Using YCSB on the client node to issue requests to the Libra cluster
 **Run benchmarks based on the database**
 ``$ ./go-ycsb run tikv -P workloads/workloada -p tikv.pd=$node IP: port$ -p threadcount=$N1$ -p operationcount=$N2$ ...``
 
-If you're planning to test the **Mixgraph** workload, go ahead and use the Mixgraph benchmark from this repository and add the following parameters to set it：
+If you're planning to test the **Mixgraph** workload, use the Mixgraph benchmark from this repository. It is modified from go-YCSB and used in the same way. You need to add the following parameters to set it:
 
-``$ -p mixgraph=true -p fieldlengthdistribution=pareto -p fieldlength=$N1$ -p fieldcount=1 -p keyrangenum=$N2$   -p insertorder=order -p zeropadding=20 -p valuesigma=226.409 -p valuek=0.923 -p keydista=0.002312 -p keydistb=0.3467 -p usedefaultrequest=false -p requestdistribution=zipfian -p keyrangedista=141.8  ...``
+``$ -p mixgraph=true -p fieldlengthdistribution=pareto -p fieldlength=$N1$ -p fieldcount=1 -p keyrangenum=$N2$ -p insertorder=order -p zeropadding=$N3$ -p valuesigma=226.409 -p valuek=0.923 -p keydista=0.002312 -p keydistb=0.3467 -p usedefaultrequest=false -p requestdistribution=zipfian -p keyrangedista=141.8  ...``
 
