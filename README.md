@@ -1,4 +1,4 @@
-# Libra: Cooperative Scheduling Between CPU and Disk I/O for Load Balancing in Distributed Key-Value Stores
+# Libra: Mitigating Dual Load Imbalance in CPU and Disk I/O via Cooperative Scheduling in Distributed Key-Value Stores
 
 ## 1. Introduction
 
