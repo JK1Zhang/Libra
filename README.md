@@ -2,7 +2,22 @@
 
 ## 1. Introduction
 
-Distributed key-value (KV) stores are fundamental components of modern computing infrastructure for efficiently storing and managing large-scale datasets.  Existing distributed KV stores often shard data by key ranges into multiple regions and distribute the regions across multiple nodes. However,  range-based sharding leads to load imbalance in two critical dimensions: CPU utilization and disk I/O. Also, the dynamic and often misaligned characteristics of the two dimensions make it challenging to simultaneously achieve balance in both.  We propose Libra, a cooperative scheduling framework that monitors the interactions of CPU and disk I/O loads and carefully migrates regions across nodes for load balancing. We implement Libra atop TiKV, a production distributed KV store, and show that Libra increases throughput by up to 72.1\% and reduces tail latency by up to 56.7\% compared to state-of-the-art approaches.
+ Distributed key-value (KV) stores are fundamental components of
+ modern computing infrastructure for efficiently storing and manag
+ing large-scale datasets. Existing distributed KV stores often shard
+ data by key ranges into multiple regions and distribute the regions
+ across multiple nodes. However, range-based sharding leads to load
+ imbalance in two critical dimensions: CPU utilization and disk I/O.
+ Also, the dynamic and often misaligned characteristics of the two
+ dimensions make it challenging to simultaneously achieve balance
+ in both. We refer to this distinctive and challenging issue as dual
+ load imbalance. To address dual load imbalance, we propose Libra,
+ a cooperative scheduling framework that monitors the interactions
+ of CPU and disk I/O loads and carefully migrates regions across
+ nodes based on the critical dimension. We implement Libra atop
+ TiKV, a production distributed KV store, and show that Libra in
+creases throughput by up to 72.1% and reduces tail latency by up
+ to 56.7% compared to state-of-the-art approaches.
 
 
 
